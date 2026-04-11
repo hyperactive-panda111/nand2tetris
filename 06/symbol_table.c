@@ -97,6 +97,11 @@ void addEntry(char *name, int address) {
 		}
 
 		new_node->name = strdup(name);
+		if (!new_node->name) {
+			free(new_node);
+			fprintf(stderr, "Symbol name allocation error\n");
+			exit(1);
+		}
 		new_node->address = address;
 		new_node->next = SymbolTable[key];
 		SymbolTable[key] = new_node;
@@ -112,11 +117,10 @@ void free_symbol_table() {
 
 		while (current != NULL) {
 			temp = current;
+			current = current->next;
 
 			free(temp->name);
 			free(temp);
-
-			current = current->next;
 		}
 
 		SymbolTable[i] = NULL;

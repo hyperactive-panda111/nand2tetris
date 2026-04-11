@@ -12,21 +12,44 @@ int main(int argc, char* argv[]) {
 	}
 
 	char out_name[256];
-	strcpy(out_name, argv[1]);
+	if (snprintf(out_name, sizeof(out_name), "%s", argv[1]) >= (int)sizeof(out_name)) {
+		fprintf(stderr, "Input path too long\n");
+		exit(1);
+	}
+
+	char* slash = strrchr(out_name, '/');
 	char* dot = strrchr(out_name, '.');
-	if (dot) strcpy(dot, ".hack");
+	if (dot && (!slash || dot > slash)) {
+		if (snprintf(dot, sizeof(out_name) - (size_t)(dot - out_name), ".hack") < 0) {
+			fprintf(stderr, "Failed to build output filename\n");
+			return (1);
+		}
+	} else {
+		size_t len = strlen(out_name);
+		if (len + strlen(".hack") >= sizeof(out_name)) {
+			fprintf(stderr, "Output path too long\n");
+			return (1);
+		}
+		strcat(out_name, ".hack");
+	}
 
-	FILE* file = fopen(argv[1], "r");
-	FILE* out_file = fopen(out_name, "w");
-
-	
-	if (!file) {
-		perror("Error opening file\n");
+	if (strcmp(out_name, argv[1]) == 0) {
+		fprintf(stderr, "Refusing to overwrite input file\n");
 		return (1);
 	}
 
+	FILE* file = fopen(argv[1], "r");
+	
+
+	
+	if (!file) {
+		perror("Error opening file");
+		return (1);
+	}
+	FILE* out_file = fopen(out_name, "w");
 	if (!out_file) {
 		perror("Error creating output file");
+		fclose(file);
 		return (1);
 	}
 

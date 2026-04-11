@@ -1,7 +1,7 @@
 #include "lookup_table.h"
 
 // Jump Lookup Table
-Mapping JumpTable[] = {
+const Mapping JumpTable[] = {
 	{"null", 0},
 	{"JGT", 1},
 	{"JEQ", 2},
@@ -13,7 +13,7 @@ Mapping JumpTable[] = {
 };
 
 //Comp Lookup Table
-Mapping CompTable[] = {
+const Mapping CompTable[] = {
 	{"0", 42},
 	{"1", 63},
 	{"-1", 58},
@@ -45,23 +45,23 @@ Mapping CompTable[] = {
 };
 
 //Dest Lookup Table
-Mapping DestTable[] = {
+const Mapping DestTable[] = {
 	{"null", 0},
 	{"M", 1},
 	{"D", 2},
-	{"DM", 3},
+	{"MD", 3},
 	{"A", 4},
 	{"AM", 5},
 	{"AD", 6},
-	{"ADM", 7},
+	{"AMD", 7},
 };
 
- int JUMP_TABLE_SIZE = sizeof(JumpTable) / sizeof(JumpTable[0]);
- int DEST_TABLE_SIZE = sizeof(DestTable) / sizeof(DestTable[0]);
- int COMP_TABLE_SIZE = sizeof(CompTable) / sizeof(CompTable[0]);
+ const size_t JUMP_TABLE_SIZE = sizeof(JumpTable) / sizeof(JumpTable[0]);
+ const size_t DEST_TABLE_SIZE = sizeof(DestTable) / sizeof(DestTable[0]);
+ const size_t COMP_TABLE_SIZE = sizeof(CompTable) / sizeof(CompTable[0]);
 
 //search functionality
-uint16_t search_lookup_table(Mapping* array, int size, char* string) {
+uint16_t search_lookup_table(const Mapping* array, size_t size, const char* string) {
 	int i;
 
 	for (i = 0; i < size; i++) {

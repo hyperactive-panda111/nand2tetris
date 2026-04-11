@@ -7,6 +7,7 @@
 
 
 char* strip(char* line) {
+	if (line == NULL) return NULL;
 	char* comment_part = strstr(line, "//");
 	if (comment_part) *comment_part= '\0';
 	
