@@ -20,6 +20,10 @@ void write_arithmetic(FILE* out, CommandType type, int* counter) {
 }
 
 void write_memory_access(FILE* out, CommandType type, char* segment, int* index, char* filename) {
+	if (*index < 0) {
+		fprintf(stderr, "negative index passed for memory access: %d\nnon-negative index required\n", *index);
+		exit(EXIT_FAILURE);
+	}
 	if (strcmp(segment, "constant") == 0)
 		write_constant(out, type, index);
 	else if (strcmp(segment, "static") == 0)

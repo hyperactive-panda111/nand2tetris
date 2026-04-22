@@ -1,5 +1,6 @@
 #include <string.h>
 #include <ctype.h>
+#include "strip.h"
 
 //objective of strip function
 //strip trailing and leading whitespace

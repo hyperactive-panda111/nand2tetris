@@ -3,6 +3,7 @@
 #include "tokenizer.h"
 
 
+//TODO: use line_number for error reporting
 void parser(FILE* fp, FILE* out, int* counter, char* filename) {
 	char raw_line[256];
 	int line_number = 0;
@@ -13,4 +14,9 @@ void parser(FILE* fp, FILE* out, int* counter, char* filename) {
 		if (line.count == 0) continue;
 		getCommand(line, out, counter, filename);
 	}
+
+	fprintf(out, 
+		"(END)\n"
+		"@END\n"
+		"0;JMP");
 }

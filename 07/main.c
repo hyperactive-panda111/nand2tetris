@@ -9,12 +9,7 @@ void verify_output_filename(char *out_name) {
 	int i, len = strlen(out_name);
 	if (*out_name >= 'a' && *out_name <= 'z') {
 		*out_name = toupper((unsigned char) *out_name);
-	}
-	
-	for (i = 1; i < len; i++)
-		if (*(out_name + i) >= 'A' && *(out_name + i) <= 'Z')
-			*(out_name + i) = tolower((unsigned char) *(out_name + i));
-
+	}	
 }
 
 int main(int argc, char* argv[]) {
@@ -38,11 +33,9 @@ int main(int argc, char* argv[]) {
 	char* slash = strrchr(out_name, '/');
 	char* dot = strrchr(out_name, '.');
 
-	if (!dot && (slash || dot < slash)) {
-		if (snprintf(dot, sizeof(out_name) - (size_t)(dot - out_name), ".hack") < 0) {
-			fprintf(stderr, "Error: input file must have .vm extension\n");
-			return (EXIT_FAILURE);
-		}
+	if (!dot || (slash && dot < slash)) {
+		fprintf(stderr, "Error: input file must have .vm extension\n");
+		exit(EXIT_FAILURE);
 	}
 	
 	if (slash) {
