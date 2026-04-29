@@ -14,16 +14,17 @@ void write_arithmetic(FILE* out, CommandType type, int* counter) {
 		case C_NOT: write_unary(out, "!M"); break;
 		case C_NEG: write_unary(out, "-M"); break;
 		default:
-			fprintf(stderr, "Error: non-arithmetic command passed to write arithmetic\n");
+			fprintf(stderr, "Error: non-arithmetic command passed to write_arithmetic\n");
 			exit(EXIT_FAILURE);
 	}
 }
 
 void write_memory_access(FILE* out, CommandType type, char* segment, int* index, char* filename) {
 	if (*index < 0) {
-		fprintf(stderr, "negative index passed for memory access: %d\nnon-negative index required\n", *index);
+		fprintf(stderr, "negative index passed: %d\nnon-negative index required\n", *index);
 		exit(EXIT_FAILURE);
 	}
+
 	if (strcmp(segment, "constant") == 0)
 		write_constant(out, type, index);
 	else if (strcmp(segment, "static") == 0)
@@ -32,8 +33,15 @@ void write_memory_access(FILE* out, CommandType type, char* segment, int* index,
 		write_fixed_base(out, type, index, "5");
 	else if (strcmp(segment, "pointer") == 0)
 		write_fixed_base(out, type, index, "3");
-	else
+	else if (strcmp(segment, "local") ||
+			 strcmp(segment, "argument") ||
+			 strcmp(segment, "this") ||
+			 strcmp(segment, "that"))
 		write_base_pointer(out, type, segment, index);
+	else {
+		fprintf(stderr, "Error: unknown memory segment '%s'\n", segment);
+		exit(EXIT_FAILURE);
+	}
 }
 
 
@@ -119,6 +127,10 @@ void write_static(FILE* out, CommandType type, int* index, char* filename) {
 			"M=D\n",
 			filename, *index);
 	}
+	else {
+		fprintf(stderr, "Invalid command type\n");
+		exit(EXIT_FAILURE);
+	}
 }
 
 void write_base_pointer(FILE* out, CommandType type, char* segment, int* index) {
@@ -126,7 +138,7 @@ void write_base_pointer(FILE* out, CommandType type, char* segment, int* index) 
 	if (strcmp(segment, "local") == 0) base = "LCL";
 	else if (strcmp(segment, "argument") == 0) base = "ARG";
 	else if (strcmp(segment, "this") == 0) base = "THIS";
-	else base = "THAT";
+	else if (strcmp(segment, "that") == 0) base = "THAT";
 
 	if (type == C_PUSH) {
 		fprintf(out,
@@ -156,6 +168,10 @@ void write_base_pointer(FILE* out, CommandType type, char* segment, int* index) 
 			"A=M\n"
 			"M=D\n",
 			*index, base);
+	}
+	else {
+		fprintf(stderr, "Invalid command type\n");
+		exit(EXIT_FAILURE);
 	}
 }
 
@@ -189,4 +205,22 @@ void write_fixed_base(FILE* out, CommandType type, int* index, char* base) {
 			"M=D\n",
 			*index, base);
 	}
+	else {
+		fprintf(stderr, "Invalid command type\n");
+		exit(EXIT_FAILURE);
+	}
+}
+
+//branching instructions
+oid write_label(FILE* out, char* function_name, char* label) {
+	fprintf(out, 
+			"(%s$%s)\n", 
+			function_name, label);
+}
+
+//function instructions
+void write_function(FILE* out, char* function_name, int n_args) {
+	fprintf(out,
+		"(%s)\n",
+		filename);
 }

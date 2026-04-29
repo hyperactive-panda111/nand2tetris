@@ -6,10 +6,9 @@
 #include "parser.h"
 
 void verify_output_filename(char *out_name) {
-	int i, len = strlen(out_name);
 	if (*out_name >= 'a' && *out_name <= 'z') {
 		*out_name = toupper((unsigned char) *out_name);
-	}	
+	}
 }
 
 int main(int argc, char* argv[]) {
@@ -34,31 +33,29 @@ int main(int argc, char* argv[]) {
 	char* dot = strrchr(out_name, '.');
 
 	if (!dot || (slash && dot < slash)) {
-		fprintf(stderr, "Error: input file must have .vm extension\n");
-		exit(EXIT_FAILURE);
+		if (snprintf(dot, sizeof(out_name) - (size_t)(dot - out_name), ".vm") < 0) {
+			fprintf(stderr, "Error: input file must have .vm extension\n");
+			return (EXIT_FAILURE);
+		}
 	}
 	
-	if (slash) {
-		stem_start = slash + 1;
-		stem_len = dot - stem_start;
-		strncpy(base_name, stem_start, stem_len);
-		*(base_name + stem_len) = '\0';
-	} else {
-		stem_start = out_name;
-		stem_len = dot - stem_start;
-		strncpy(base_name, stem_start, stem_len);
-		*(base_name + stem_len) = '\0';
+	stem_start = slash ? slash + 1 : out_name;
+	stem_len = (size_t)(dot - stem_start);
+
+	if (stem_len >= sizeof(base_name)) {
+		fprintf(stderr, "Error: base name too long\n");
+		exit(EXIT_FAILURE);
 	}
+
+	memcpy(base_name, stem_start, stem_len);
+	base_name[stem_len] = '\0';   
 
 	snprintf(dot, sizeof(out_name) - (size_t)(dot - out_name), ".asm");
 	
 	//ensure output filename adheres to standard
 	verify_output_filename(base_name);
-	
 
 	FILE* file = fopen(argv[1], "r");
-	
-
 	
 	if (!file) {
 		perror("Error opening file");
@@ -74,10 +71,9 @@ int main(int argc, char* argv[]) {
 	create_lookup_table();
 	parser(file, out_file, &counter, base_name);
 	free_lookup_table();
-
+	
 	fclose(file);
 	fclose(out_file);
-
 
 	return (EXIT_SUCCESS);
 }
