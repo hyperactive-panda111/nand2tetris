@@ -11,7 +11,7 @@ void parser(FILE* fp, FILE* out, int* counter, char* filename) {
 
 		//handles truncated buffers
 		if (strchr(raw_line, '\n') == NULL && !feof(fp)) {
-			fprintf(stderr, "Line %d exceedes parser buffer\n", line_number);
+			fprintf(stderr, "Line %d exceeds parser buffer\n", line_number);
 			int ch;
 			while ((ch = fgetc(fp)) != '\n' && ch != EOF) {
 

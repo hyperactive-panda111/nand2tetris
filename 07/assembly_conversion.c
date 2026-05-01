@@ -134,7 +134,7 @@ void write_static(FILE* out, CommandType type, int* index, char* filename) {
 }
 
 void write_base_pointer(FILE* out, CommandType type, char* segment, int* index) {
-	char* base;
+	char* base = NULL;
 	if (strcmp(segment, "local") == 0) base = "LCL";
 	else if (strcmp(segment, "argument") == 0) base = "ARG";
 	else if (strcmp(segment, "this") == 0) base = "THIS";
@@ -170,7 +170,7 @@ void write_base_pointer(FILE* out, CommandType type, char* segment, int* index) 
 			*index, base);
 	}
 	else {
-		fprintf(stderr, "Invalid command type\n");
+		fprintf("Error: unexpected segment '%s' in write_base_pointer\n", segment);
 		exit(EXIT_FAILURE);
 	}
 }
@@ -212,7 +212,7 @@ void write_fixed_base(FILE* out, CommandType type, int* index, char* base) {
 }
 
 //branching instructions
-oid write_label(FILE* out, char* function_name, char* label) {
+void write_label(FILE* out, char* function_name, char* label) {
 	fprintf(out, 
 			"(%s$%s)\n", 
 			function_name, label);
@@ -222,5 +222,5 @@ oid write_label(FILE* out, char* function_name, char* label) {
 void write_function(FILE* out, char* function_name, int n_args) {
 	fprintf(out,
 		"(%s)\n",
-		filename);
+		function_name);
 }
