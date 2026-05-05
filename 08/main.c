@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) {
         char* slash = strrchr(out_name, '/');
         char* dot   = strrchr(out_name, '.');
 
-        if (!dot || (slash && dot < slash)) {
+        if (!dot || (slash && dot < slash) || strcmp(dot, ".vm") != 0) {
             fprintf(stderr, "Error: input file must have .vm extension\n");
             return EXIT_FAILURE;
         }

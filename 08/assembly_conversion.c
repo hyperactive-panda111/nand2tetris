@@ -33,10 +33,10 @@ void write_memory_access(FILE* out, CommandType type, char* segment, int* index,
 		write_fixed_base(out, type, index, "5");
 	else if (strcmp(segment, "pointer") == 0)
 		write_fixed_base(out, type, index, "3");
-	else if (strcmp(segment, "local") ||
-			 strcmp(segment, "argument") ||
-			 strcmp(segment, "this") ||
-			 strcmp(segment, "that"))
+	else if (strcmp(segment, "local") == 0 ||
+			 strcmp(segment, "argument") == 0 ||
+			 strcmp(segment, "this") == 0 ||
+			 strcmp(segment, "that") == 0)
 		write_base_pointer(out, type, segment, index);
 	else {
 		fprintf(stderr, "Error: unknown memory segment '%s'\n", segment);
