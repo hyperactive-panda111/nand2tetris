@@ -48,7 +48,12 @@ void getCommand(TokenizedLine info, FILE* out, int* counter, int* n_args, char* 
 			break;
 		}
 		case C_FUNCTION: {
-			strcpy(function_name, info.tokens[1]);
+			size_t size = strlen(info.tokens[1]);
+			if (n >= 256) {
+				fprintf(stderr, "Error: function name too long\n");
+				exit(EXIT_FAILURE);
+			}
+			memcpy(function_name, info.tokens[1], n + 1);
 			*n_args = string_to_int(info.tokens[2]);
 			if (*n_args < 0) {
 			    fprintf(stderr, "function local count must be non-negative\n");
@@ -62,7 +67,7 @@ void getCommand(TokenizedLine info, FILE* out, int* counter, int* n_args, char* 
 			char* callee = info.tokens[1];
 			int n_args = string_to_int(info.tokens[2]);
 			if (n_args < 0) {
-			    fprintf(stderr, "function local count must be non-negative\n");
+			    fprintf(stderr, "call argument count must be non-negative\n");
 				exit(EXIT_FAILURE);
 			}
 			write_call(out, function_name, callee, n_args, counter);

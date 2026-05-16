@@ -29,9 +29,19 @@ void write_memory_access(FILE* out, CommandType type, char* segment, int* index,
 		write_constant(out, type, index);
 	else if (strcmp(segment, "static") == 0)
 		write_static(out, type, index, filename);
-	else if (strcmp(segment, "temp") == 0)
+	else if (strcmp(segment, "temp") == 0) {
+		if (*index > 7) {
+			fprintf(stderr, "temp index out of range: %d\n", *index);
+			exit(EXIT_FAILURE);
+		}
+	}
 		write_fixed_base(out, type, index, "5");
-	else if (strcmp(segment, "pointer") == 0)
+	else if (strcmp(segment, "pointer") == 0) {
+		if (*index > 1) {
+			fprintf(stderr, "pointer index out of range: %d\n", *index);
+			exit(EXIT_FAILURE);
+		}
+	}
 		write_fixed_base(out, type, index, "3");
 	else if (strcmp(segment, "local") == 0 ||
 			 strcmp(segment, "argument") == 0 ||
@@ -170,7 +180,7 @@ void write_base_pointer(FILE* out, CommandType type, char* segment, int* index) 
 			*index, base);
 	}
 	else {
-		fprintf("Error: unexpected segment '%s' in write_base_pointer\n", segment);
+		fprintf(out, "Error: unexpected segment '%s' in write_base_pointer\n", segment);
 		exit(EXIT_FAILURE);
 	}
 }
