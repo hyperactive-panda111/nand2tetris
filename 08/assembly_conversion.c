@@ -34,8 +34,9 @@ void write_memory_access(FILE* out, CommandType type, char* segment, int* index,
 			fprintf(stderr, "temp index out of range: %d\n", *index);
 			exit(EXIT_FAILURE);
 		}
-	}
+	
 		write_fixed_base(out, type, index, "5");
+	}
 	else if (strcmp(segment, "pointer") == 0) {
 		if (*index > 1) {
 			fprintf(stderr, "pointer index out of range: %d\n", *index);

@@ -49,7 +49,7 @@ void getCommand(TokenizedLine info, FILE* out, int* counter, int* n_args, char* 
 		}
 		case C_FUNCTION: {
 			size_t size = strlen(info.tokens[1]);
-			if (n >= 256) {
+			if (size >= 256) {
 				fprintf(stderr, "Error: function name too long\n");
 				exit(EXIT_FAILURE);
 			}
