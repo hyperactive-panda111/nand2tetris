@@ -20,9 +20,22 @@ char* read_file_to_buffer(const char* filename) {
         exit(EXIT_FAILURE);
     }
 
-    fseek(file, 0, SEEK_END);
+    if (fseek(file, 0, SEEK_END) != 0) {
+        fprintf(stderr, "Fatal Error: Failed to seek file %s\n", filename);
+        fclose(file);
+        exit(EXIT_FAILURE);
+    }
     long length = ftell(file);
-    fseek(file, 0, SEEK_SET);
+    if (length < 0) {
+        fprintf(stderr, "Fatal Error: Failed to determine file size of %s\n", filename);
+        fclose(file);
+        exit(EXIT_FAILURE);
+    }
+    if (fseek(file, 0, SEEK_SET) != 0) {
+        fprintf(stderr, "Fatal Error: Failed to rewind file %s\n", filename);
+        fclose(file);
+        exit(EXIT_FAILURE);
+    }
 
     char* buffer = malloc(length + 1);
     if (!buffer) {
@@ -30,7 +43,14 @@ char* read_file_to_buffer(const char* filename) {
         exit(EXIT_FAILURE);
     }
 
+    size_t expected = (size_t)length;
     size_t read_bytes = fread(buffer, 1, length, file);
+    if (read_bytes == 0) {
+        fprintf(stderr, "Fatal Error: Failed to read file %s\n");
+        free(buffer);
+        fclose(file);
+        exit(EXIT_FAILURE);
+    }
     buffer[read_bytes] = '\0';
 
     fclose(file);
