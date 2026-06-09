@@ -46,7 +46,7 @@ char* read_file_to_buffer(const char* filename) {
     size_t expected = (size_t)length;
     size_t read_bytes = fread(buffer, 1, length, file);
     if (read_bytes == 0) {
-        fprintf(stderr, "Fatal Error: Failed to read file %s\n");
+        fprintf(stderr, "Fatal Error: Failed to read file %s\n", filename);
         free(buffer);
         fclose(file);
         exit(EXIT_FAILURE);
