@@ -2,6 +2,9 @@
 #include <ctype.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 void add_token(TokenTable *table, Token token);
 int string_to_int(const char *str, size_t size);
@@ -97,7 +100,11 @@ void tokenize_identifier(char **anchor, TokenTable *table,
   }
 
   size_t tkn_length = scout - *anchor;
-  strncpy(tmp_tkn, *anchor, tkn_length);
+  if (tkn_length >= sizeof(tmp_tkn)) {
+      fprintf(stderr, "Identifier too long: %zu bytes\n", tkn_length);
+      exit(EXIT_FAILURE);
+  }
+  memcpy(tmp_tkn, *anchor, tkn_length);
   tmp_tkn[tkn_length] = '\0';
   // check against keyword array
   void *result =
@@ -123,16 +130,6 @@ void tokenize_number(char **anchor, TokenTable *table, CharType *char_table) {
                     "PROCESSING A NUMBER\n");
     exit(EXIT_FAILURE);
   }
-
-  // add error message is non-digit character is encountered
-  //  print string till offending character is encountered
-  //  print from *anchor to the offending character scanned by *scout
-  // if (char_table[(unsigned char)*scout] != C_DIGIT &&
-  //     !(isspace((unsigned char)*scout))) {
-  //   int len = scout - *anchor;
-  //   fprintf(stderr, "Error while scanning number: '%.*s'\n", len, *anchor);
-  //   exit(EXIT_FAILURE);
-  // }
 
   size_t tkn_length = scout - *anchor;
   int out_of_range = string_to_int(*anchor, tkn_length);
@@ -175,11 +172,6 @@ void tokenize_string(char **anchor, TokenTable *table, CharType *char_table) {
   add_token(table, t);
   *anchor = scout + 1;
 }
-
-// void tokenize_eof(TokenTable* table, char* anchor) {
-//     Token eof = (Token) { T_EOF, anchor, 1 };
-//     add_token(table, eof);
-// }
 
 void handle_comments(char **anchor) {
   // two variants: //, /* to */ and /** to */
@@ -227,7 +219,9 @@ void add_token(TokenTable *table, Token token) {
 }
 
 int string_to_int(const char *str, size_t size) {
-  strncpy(tmp_tkn, str, size);
+    if (size >= sizeof(tmp_tkn))
+        return 1;
+    memcpy(tmp_tkn, str, size);
   tmp_tkn[size] = '\0';
   long value = atol(tmp_tkn);
   if (value > 32767)

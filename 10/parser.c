@@ -487,6 +487,10 @@ void compileTerm(ParserState *p) {
     break;
   } // keywordConstant
   case T_KEYWORD: {
+      if (!is_keyword_constant(t)) {
+          fprintf(stderr, "Syntax Error: invalid keyword in term\n");
+          exit(EXIT_FAILURE);
+      }
     if (is_keyword_constant(t)) {
       if (compare_lexeme(t, "null") || compare_lexeme(t, "false"))
         fprintf(p->vm_out, "push constant 0\n");
@@ -558,7 +562,15 @@ void compileTerm(ParserState *p) {
       compileExpression(p);
       expect(p, T_SYMBOL, ")");
     }
+    else {
+        fprintf(stderr, "Syntax Error: invalid symbol in term\n");
+        exit(EXIT_FAILURE);
+    }
     break;
+  }
+  default: {
+      fprintf(stderr, "Syntax Error: expected term\n");
+      exit(EXIT_FAILURE);
   }
   }
   writeTag(p, "</term>");

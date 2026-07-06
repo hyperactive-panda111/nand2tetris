@@ -44,7 +44,6 @@ void tokenize_number(char** anchor, TokenTable* table, CharType* char_table);
 void tokenize_identifier(char** anchor, TokenTable* table, CharType* char_table);
 void tokenize_symbol(char** anchor, TokenTable* table);
 void handle_comments(char** anchor);
-void tokenize_eof(TokenTable* table, char* anchor);
 int string_compare(const void* s1, const void* s2);
 void print_tokenizer_xml(FILE *out, TokenTable* table);
 

@@ -5,7 +5,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Token peek(ParserState *p) { return p->table->tokens[p->current]; }
+Token peek(ParserState *p) { 
+  if (p->current >= p->table->count) {
+    fprintf(stderr, "Syntax Error: Unexpected end of input\n");
+    exit(EXIT_FAILURE);
+  }
+  return p->table->tokens[p->current]; 
+}
 
 void advance(ParserState *p) {
   if (p->current < p->table->count) {
