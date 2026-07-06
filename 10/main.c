@@ -14,7 +14,7 @@ int is_jack_file(const char *filename) {
 }
 
 char *read_file_to_buffer(const char *filename) {
-  FILE *file = fopen(filename, "rb");
+  FILE *file = fopen(filename, "r");
   if (!file) {
     fprintf(stderr, "Fatal Error: Could not open file %s\n", filename);
     exit(EXIT_FAILURE);
@@ -44,15 +44,15 @@ char *read_file_to_buffer(const char *filename) {
     exit(EXIT_FAILURE);
   }
 
-  size_t expected = (size_t)length;
-  size_t read_bytes = fread(buffer, 1, expected, file);
-  if (read_bytes != expected) {
-      fprintf(stderr, "Fatal Error: Failed to read entire file %s\n", filename);
-      fclose(file);
-      free(buffer);
-      exit(EXIT_FAILURE);
+  size_t read_bytes = fread(buffer, 1, length, file);
+  if (read_bytes == 0) {
+    fprintf(stderr, "Fatal Error: Failed to read entire file %s\n", filename);
+    fclose(file);
+    free(buffer);
+    exit(EXIT_FAILURE);
   }
-  buffer[expected] = '\0';
+  buffer[read_bytes] = '\0';
+
   fclose(file);
   return buffer;
 }
