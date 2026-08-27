@@ -176,7 +176,6 @@ nand2tetris/
     └── chapter_10/     — Jack Tokenizer and Parser (C)
 ```
 
-Each chapter branch contains its own README with implementation notes, design decisions, and test results.
 
 ---
 
